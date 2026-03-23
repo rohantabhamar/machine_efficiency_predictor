@@ -91,7 +91,9 @@ http://127.0.0.1:5000
 
 This project is deployment-ready and can be deployed on platforms like:
 
-* Render
+* Render:
+https://machine-efficiency-predictor.onrender.com/
+
 * PythonAnywhere
 * Docker-based environments
 

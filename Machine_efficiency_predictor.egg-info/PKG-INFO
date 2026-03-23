@@ -1,0 +1,14 @@
+Metadata-Version: 2.4
+Name: Machine_efficiency_predictor
+Version: 1.0
+Author: rohanta_bhamare
+Requires-Dist: pandas
+Requires-Dist: numpy
+Requires-Dist: scikit-learn
+Requires-Dist: flask
+Requires-Dist: joblib
+Requires-Dist: matplotlib
+Requires-Dist: seaborn
+Requires-Dist: setuptools
+Dynamic: author
+Dynamic: requires-dist

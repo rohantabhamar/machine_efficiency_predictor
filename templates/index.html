@@ -1,25 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width , initial-scale=1.0">
-        <link rel="stylesheet" href="static/style.css">
-        <title>Smart Manufacturing Machines Efficiency Prediction</title> 
-    </head>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Manufacturing Machine Efficiency Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="page-container">
+        <div class="card">
+            <div class="header">
+                <h1>Smart Manufacturing Machine Efficiency Predictor</h1>
+                <p>
+                    Enter machine and production parameters to predict the efficiency status.
+                </p>
+            </div>
 
-    <body>
-        <h1>Smart Manufacturing Machines Efficiency Prediction</h1>
-        <form method="post">
-            {% for feature in features %}
-                <label for="{{ feature }}"> {{ feature }} :</label>
-                <input type="text" name="{{ feature }}" required><br>
-            {% endfor %}
+            <form method="POST" class="prediction-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="timestamp">Timestamp</label>
+                        <input type="datetime-local" id="timestamp" name="timestamp" required>
+                    </div>
 
-            <button type="submit">PREDICT</button>
-        </form>
+                    <div class="form-group">
+                        <label for="operation_mode">Operation Mode</label>
+                        <select id="operation_mode" name="operation_mode" required>
+                            <option value="" disabled selected>Select mode</option>
+                            <option value="Idle">Idle</option>
+                            <option value="Active">Active</option>
+                            <option value="Maintenance">Maintenance</option>
+                        </select>
+                    </div>
 
-        {% if prediction %}
-            <h2>Prediction : {{ prediction }}</h2>
-        {% endif %}
-    </body>
+                    <div class="form-group">
+                        <label for="temperature_c">Temperature (°C)</label>
+                        <input type="number" step="any" id="temperature_c" name="temperature_c" placeholder="e.g. 74.13" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vibration_hz">Vibration (Hz)</label>
+                        <input type="number" step="any" id="vibration_hz" name="vibration_hz" placeholder="e.g. 3.50" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="power_consumption_kw">Power Consumption (kW)</label>
+                        <input type="number" step="any" id="power_consumption_kw" name="power_consumption_kw" placeholder="e.g. 8.61" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="network_latency_ms">Network Latency (ms)</label>
+                        <input type="number" step="any" id="network_latency_ms" name="network_latency_ms" placeholder="e.g. 10.65" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="packet_loss">Packet Loss (%)</label>
+                        <input type="number" step="any" id="packet_loss" name="packet_loss" placeholder="e.g. 0.20" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quality_defect_rate">Quality Control Defect Rate (%)</label>
+                        <input type="number" step="any" id="quality_defect_rate" name="quality_defect_rate" placeholder="e.g. 7.75" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="production_speed">Production Speed (units/hr)</label>
+                        <input type="number" step="any" id="production_speed" name="production_speed" placeholder="e.g. 477.65" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maintenance_score">Predictive Maintenance Score</label>
+                        <input type="number" step="any" id="maintenance_score" name="maintenance_score" placeholder="e.g. 0.34" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="error_rate">Error Rate (%)</label>
+                        <input type="number" step="any" id="error_rate" name="error_rate" placeholder="e.g. 14.96" required>
+                    </div>
+                </div>
+
+                <button type="submit">Predict Efficiency</button>
+            </form>
+
+            {% if prediction %}
+                <div class="result-card {{ prediction_class }}">
+                    <h2>Prediction Result</h2>
+                    <p class="prediction-value">{{ prediction }}</p>
+                </div>
+            {% endif %}
+
+            {% if error_message %}
+                <div class="error-card">
+                    <h2>Input Error</h2>
+                    <p>{{ error_message }}</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
 </html>

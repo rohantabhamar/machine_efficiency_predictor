@@ -13,7 +13,6 @@ SCALER_PATH = BASE_DIR / "artifacts" / "processed" / "scaler.pkl"
 model = joblib.load(MODEL_PATH)
 scaler = joblib.load(SCALER_PATH)
 
-# Update this mapping if your training encoding was different
 OPERATION_MODE_MAP = {
     "Idle": 0,
     "Active": 1,
@@ -26,6 +25,9 @@ LABELS = {
     2: "Medium"
 }
 
+@app.route("/health")
+def health():
+    return {"status": "ok"}, 200
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -40,34 +42,22 @@ def index():
 
             if not timestamp_str:
                 raise ValueError("Timestamp is required.")
-
             if operation_mode_str not in OPERATION_MODE_MAP:
                 raise ValueError("Please select a valid operation mode.")
 
             dt = datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M")
 
-            operation_mode = OPERATION_MODE_MAP[operation_mode_str]
-            temperature_c = float(request.form["temperature_c"])
-            vibration_hz = float(request.form["vibration_hz"])
-            power_consumption_kw = float(request.form["power_consumption_kw"])
-            network_latency_ms = float(request.form["network_latency_ms"])
-            packet_loss = float(request.form["packet_loss"])
-            quality_defect_rate = float(request.form["quality_defect_rate"])
-            production_speed = float(request.form["production_speed"])
-            maintenance_score = float(request.form["maintenance_score"])
-            error_rate = float(request.form["error_rate"])
-
             input_data = [
-                operation_mode,
-                temperature_c,
-                vibration_hz,
-                power_consumption_kw,
-                network_latency_ms,
-                packet_loss,
-                quality_defect_rate,
-                production_speed,
-                maintenance_score,
-                error_rate,
+                OPERATION_MODE_MAP[operation_mode_str],
+                float(request.form["temperature_c"]),
+                float(request.form["vibration_hz"]),
+                float(request.form["power_consumption_kw"]),
+                float(request.form["network_latency_ms"]),
+                float(request.form["packet_loss"]),
+                float(request.form["quality_defect_rate"]),
+                float(request.form["production_speed"]),
+                float(request.form["maintenance_score"]),
+                float(request.form["error_rate"]),
                 dt.year,
                 dt.month,
                 dt.day,
@@ -79,13 +69,7 @@ def index():
             pred = model.predict(scaled_array)[0]
 
             prediction = LABELS.get(pred, "Unknown")
-
-            if prediction == "High":
-                prediction_class = "high"
-            elif prediction == "Medium":
-                prediction_class = "medium"
-            elif prediction == "Low":
-                prediction_class = "low"
+            prediction_class = prediction.lower()
 
         except ValueError as e:
             error_message = f"Invalid input: {e}"
@@ -99,6 +83,5 @@ def index():
         error_message=error_message
     )
 
-
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000)
